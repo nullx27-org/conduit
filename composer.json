@@ -1,0 +1,14 @@
+{
+    "name": "nullx27/conduit",
+    "description": "Simple EVE Online ESI client",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andre Peiffer",
+            "email": "necrotex@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
