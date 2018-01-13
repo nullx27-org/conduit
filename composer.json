@@ -1,6 +1,7 @@
 {
     "name": "nullx27/conduit",
-    "description": "Simple EVE Online ESI client",
+    "description": "Simple EVE  Online ESI client",
+    "version": "1.0",
     "type": "library",
     "license": "MIT",
     "keywords": [

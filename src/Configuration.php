@@ -65,9 +65,9 @@ class Configuration
     /**
      * @return Configuration
      */
-    public static function getInstance() : self
+    public static function getInstance(): self
     {
-        if(is_null(static::$instance)) {
+        if (is_null(static::$instance)) {
             static::$instance = new self();
         }
 
@@ -133,7 +133,7 @@ class Configuration
     /**
      * @return mixed
      */
-    public function getUserAgent() : string
+    public function getUserAgent(): string
     {
         return $this->userAgent;
     }
@@ -149,7 +149,7 @@ class Configuration
     /**
      * @return mixed
      */
-    public function getDatasource() : string
+    public function getDatasource(): string
     {
         return $this->datasource;
     }

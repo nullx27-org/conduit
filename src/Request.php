@@ -4,6 +4,7 @@
 namespace Conduit;
 
 
+use Conduit\Exceptions\ErrorLimitException;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Kevinrob\GuzzleCache\CacheMiddleware;
@@ -26,13 +27,14 @@ class Request
      * Request constructor.
      * @param Configuration $configuration
      * @param Authentication|null $authentication
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function __construct(Configuration $configuration, ?Authentication $authentication)
     {
         $this->configuration = $configuration;
         $query = ['datasource' => $this->configuration->getDatasource()];
 
-        if(!is_null($authentication)) {
+        if (!is_null($authentication)) {
             $query['token'] = $authentication->getAccessToken();
         }
 
@@ -60,14 +62,19 @@ class Request
     /**
      * @param \GuzzleHttp\Psr7\Request $request
      * @return Response
+     * @throws ErrorLimitException
+     * @throws \HttpRequestException
      */
     public function send(\GuzzleHttp\Psr7\Request $request)
     {
-
-        try{
+        try {
             $response = $this->httpClient->send($request);
         } catch (\Exception $e) {
-            print_r($e->getMessage());
+            throw new \HttpRequestException($e->getMessage());
+        }
+
+        if($response->getHeader('X-ESI-Error-Limit')) {
+            throw new ErrorLimitException('ESI error limit reached');
         }
 
         return new Response($response);

@@ -9,7 +9,7 @@ class Response
     /**
      * @var array Response headers
      */
-    public $headers = [];
+    protected $headers = [];
 
     /**
      * @var mixed requested data
@@ -33,6 +33,26 @@ class Response
     public function __get(string $name)
     {
         return $this->data->$name;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @param string $name
+     * @return null|string
+     */
+    public function getHeader(string $name) : ?string
+    {
+        if(!array_key_exists($name, $this->headers))
+            return null;
+
+        return $this->headers[$name][0];
     }
 
 }
