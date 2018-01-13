@@ -48,5 +48,13 @@ class Conduit
         return new Endpoint($name, $params, $this->configuration, $this->authentication);
     }
 
+    /**
+     * @param Authentication $authentication
+     */
+    public function setAuthentication(Authentication $authentication): void
+    {
+        $this->authentication = $authentication;
+    }
+
 
 }
