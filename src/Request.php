@@ -7,6 +7,7 @@ namespace Conduit;
 use Conduit\Exceptions\ErrorLimitException;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
+use Conduit\Exceptions\HttpStatusException;
 use Kevinrob\GuzzleCache\CacheMiddleware;
 use Kevinrob\GuzzleCache\Storage\Psr6CacheStorage;
 use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
@@ -63,14 +64,14 @@ class Request
      * @param \GuzzleHttp\Psr7\Request $request
      * @return Response
      * @throws ErrorLimitException
-     * @throws \HttpRequestException
+     * @throws HttpStatusException
      */
     public function send(\GuzzleHttp\Psr7\Request $request)
     {
         try {
             $response = $this->httpClient->send($request);
         } catch (\Exception $e) {
-            throw new \HttpRequestException($e->getMessage());
+            throw new HttpStatusException($e->getMessage(), $e->getResponse()->getStatusCode());
         }
 
         if($response->getHeader('X-ESI-Error-Limit')) {
