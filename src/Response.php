@@ -4,6 +4,9 @@
 namespace Conduit;
 
 
+use Conduit\Exceptions\PropertyNotFoundException;
+use PHPUnit\Runner\Exception;
+
 class Response
 {
     /**
@@ -29,10 +32,16 @@ class Response
     /**
      * @param string $name
      * @return mixed
+     * @throws PropertyNotFoundException
      */
     public function __get(string $name)
     {
-        return $this->data->$name;
+        try {
+            return $this->data->$name;
+        } catch (\Exception $exception)
+        {
+            throw new PropertyNotFoundException("$name was not returned by the API");
+        }
     }
 
     /**
@@ -55,4 +64,16 @@ class Response
         return $this->headers[$name][0];
     }
 
+    /**
+     * @param string $name
+     * @param null $default
+     * @return null|mixed
+     */
+    public function get(string $name, $default = null) {
+        if(isset($this->data->$name)) {
+            return $this->data->$name;
+        } else {
+          return $default;
+        }
+    }
 }
