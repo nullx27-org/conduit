@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Conduit;
-
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use Psr\Cache\CacheItemPoolInterface;

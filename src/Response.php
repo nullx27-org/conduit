@@ -1,11 +1,8 @@
 <?php
 
-
 namespace Conduit;
 
-
 use Conduit\Exceptions\PropertyNotFoundException;
-use PHPUnit\Runner\Exception;
 
 class Response
 {

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Conduit;
-
 
 use Conduit\Exceptions\ErrorLimitException;
 use GuzzleHttp\Client;

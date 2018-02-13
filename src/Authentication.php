@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Conduit;
-
 
 use GuzzleHttp\Client;
 

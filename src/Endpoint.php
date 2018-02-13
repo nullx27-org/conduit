@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Conduit;
 
 use Conduit\Exceptions\InvalidArgumentException;
