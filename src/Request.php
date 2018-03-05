@@ -6,6 +6,7 @@ use Conduit\Exceptions\ErrorLimitException;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Conduit\Exceptions\HttpStatusException;
+use GuzzleHttp\TransferStats;
 use Kevinrob\GuzzleCache\CacheMiddleware;
 use Kevinrob\GuzzleCache\Storage\Psr6CacheStorage;
 use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
@@ -26,9 +27,10 @@ class Request
      * Request constructor.
      * @param Configuration $configuration
      * @param Authentication|null $authentication
+     * @param array $request_query
      * @throws \Psr\Cache\InvalidArgumentException
      */
-    public function __construct(Configuration $configuration, ?Authentication $authentication)
+    public function __construct(Configuration $configuration, Array $request_query = [], ?Authentication $authentication)
     {
         $this->configuration = $configuration;
         $query = ['datasource' => $this->configuration->getDatasource()];
@@ -36,6 +38,8 @@ class Request
         if (!is_null($authentication)) {
             $query['token'] = $authentication->getAccessToken();
         }
+
+        $query = array_merge($query, $request_query);
 
         //caching stuff
         $handlerStack = HandlerStack::create();
@@ -53,8 +57,8 @@ class Request
         $this->httpClient = new Client([
             'base_uri' => 'https://esi.tech.ccp.is/latest/',
             'timeout' => $this->configuration->getRequestTimeout(),
-            'query' => $query,
-            'handler' => $handlerStack
+            'handler' => $handlerStack,
+            'query' => $query
         ]);
     }
 
@@ -67,7 +71,14 @@ class Request
     public function send(\GuzzleHttp\Psr7\Request $request)
     {
         try {
-            $response = $this->httpClient->send($request);
+            $response = $this->httpClient->send($request,
+                [
+                    'on_stats' => function (TransferStats $stats) {
+                        echo $stats->getEffectiveUri() . "\n";
+                        }
+                ]
+            );
+
         } catch (\Exception $e) {
             throw new HttpStatusException($e->getMessage(), $e->getResponse()->getStatusCode());
         }

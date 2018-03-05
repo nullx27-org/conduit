@@ -4,6 +4,7 @@ namespace Conduit;
 
 use Conduit\Exceptions\InvalidArgumentException;
 use GuzzleHttp\Psr7\Request as HttpRequest;
+use GuzzleHttp\Psr7\Uri;
 
 class Endpoint
 {
@@ -21,6 +22,11 @@ class Endpoint
      * @var array
      */
     protected $body = [];
+
+    /**
+     * @var array
+     */
+    protected $query = [];
 
     /**
      * @var Authentication|null
@@ -60,19 +66,26 @@ class Endpoint
     {
         $this->uri .= $name . '/';
 
+
         if (!empty($arguments)) {
-            $this->uri .= $arguments[0] . '/';
+
+            if(is_array($arguments[0])) {
+                $this->query = array_merge($this->query, $arguments[0]);
+            } else {
+                $this->uri .= $arguments[0] . '/';
+            }
 
             if (array_key_exists(1, $arguments)) {
                 if (!is_array($arguments[1])) {
-                    throw new InvalidArgumentException('Body data needs to be an array');
+                    throw new InvalidArgumentException('Query data needs to be an array');
                 }
+
+                $this->query = array_merge($this->query, $arguments[1]);
             }
         }
 
         return $this;
     }
-
 
     /**
      * @param array $data
@@ -84,12 +97,24 @@ class Endpoint
         return $this;
     }
 
+    public function query(array $data): self
+    {
+        $this->query = array_merge($this->query, $data);
+        return $this;
+    }
+
     /**
      * @return string
      */
-    private function getRequestURI(): string
+    public function getRequestURI(): string
     {
-        return rtrim($this->endpoint . $this->uri, '/') . '/';
+        $uri = new Uri(rtrim($this->endpoint . $this->uri, '/') . '/');
+
+        foreach($this->query as $key => $value) {
+            $uri = Uri::withQueryValue($uri, $key, $value);
+        }
+
+        return $uri;
     }
 
     /**
@@ -108,7 +133,8 @@ class Endpoint
     /**
      * @return Response
      * @throws Exceptions\ErrorLimitException
-     * @throws \HttpRequestException
+     * @throws Exceptions\HttpStatusException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function get()
     {
@@ -121,7 +147,8 @@ class Endpoint
     /**
      * @return Response
      * @throws Exceptions\ErrorLimitException
-     * @throws \HttpRequestException
+     * @throws Exceptions\HttpStatusException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function post()
     {
@@ -134,7 +161,8 @@ class Endpoint
     /**
      * @return Response
      * @throws Exceptions\ErrorLimitException
-     * @throws \HttpRequestException
+     * @throws Exceptions\HttpStatusException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function put()
     {
@@ -147,7 +175,8 @@ class Endpoint
     /**
      * @return Response
      * @throws Exceptions\ErrorLimitException
-     * @throws \HttpRequestException
+     * @throws Exceptions\HttpStatusException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function delete()
     {
@@ -161,11 +190,12 @@ class Endpoint
      * @param HttpRequest $request
      * @return Response
      * @throws Exceptions\ErrorLimitException
-     * @throws \HttpRequestException
+     * @throws Exceptions\HttpStatusException
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     private function makeRequest(HttpRequest $request)
     {
-        return (new Request($this->configuration, $this->authentication))->send($request);
+        return (new Request($this->configuration, $this->query, $this->authentication))->send($request);
     }
 
 }
