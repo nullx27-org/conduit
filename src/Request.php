@@ -71,13 +71,7 @@ class Request
     public function send(\GuzzleHttp\Psr7\Request $request)
     {
         try {
-            $response = $this->httpClient->send($request,
-                [
-                    'on_stats' => function (TransferStats $stats) {
-                        echo $stats->getEffectiveUri() . "\n";
-                        }
-                ]
-            );
+            $response = $this->httpClient->send($request);
 
         } catch (\Exception $e) {
             throw new HttpStatusException($e->getMessage(), $e->getResponse()->getStatusCode());
