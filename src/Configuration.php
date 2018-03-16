@@ -31,6 +31,11 @@ class Configuration
     protected $datasource = 'tranquility';
 
     /**
+     * @var string ESI Base URI
+     */
+    protected $baseUri = 'https://esi.evetech.net/latest/';
+
+    /**
      * @var array default http handlers
      */
     protected $defaultHeaders = [];
@@ -158,6 +163,22 @@ class Configuration
     public function setDatasource(string $datasource)
     {
         $this->datasource = $datasource;
+    }
+
+    /**
+     * @return string
+     */
+    public function getESIBaseUri(): string
+    {
+        return $this->baseUri;
+    }
+
+    /**
+     * @param string $baseUri
+     */
+    public function setESIBaseUri(string $baseUri): void
+    {
+        $this->baseUri = $baseUri;
     }
 
 

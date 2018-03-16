@@ -55,7 +55,7 @@ class Request
         );
 
         $this->httpClient = new Client([
-            'base_uri' => 'https://esi.tech.ccp.is/latest/',
+            'base_uri' => $this->configuration->getESIBaseUri(),
             'timeout' => $this->configuration->getRequestTimeout(),
             'handler' => $handlerStack,
             'query' => $query
