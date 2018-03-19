@@ -33,7 +33,7 @@ class Configuration
     /**
      * @var string ESI Base URI
      */
-    protected $baseUri = 'https://esi.evetech.net/latest/';
+    protected $baseUri = 'https://esi.tech.ccp.is/latest/';
 
     /**
      * @var array default http handlers
